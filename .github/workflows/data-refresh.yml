@@ -1,6 +1,4 @@
-
-- name: Update FX and news
-  run: python3 update_data.py
+name: ARISE Daily Data Refresh
 
 on:
   schedule:
@@ -18,8 +16,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-     - name: Update FX and news
-  run: python3 update_data.py
+      - name: Update FX and news
+        run: python3 update_data.py
 
       - name: Commit refreshed data
         run: |
