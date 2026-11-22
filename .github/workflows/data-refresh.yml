@@ -1,5 +1,6 @@
 
-name: ARISE Daily Data Refresh
+- name: Update FX and news
+  run: python3 update_data.py
 
 on:
   schedule:
