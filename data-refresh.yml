@@ -1,0 +1,39 @@
+name: ARISE Daily Data Refresh
+on:
+  schedule:
+    - cron: '20 4 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: arise-data-refresh
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update reference FX and news cache
+        run: python3 scripts/update_data.py
+      - name: Commit updated cache if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          if git diff --cached --quiet; then
+            echo "No cache changes to commit."
+          else
+            git commit -m "chore: refresh ARISE data cache"
+            git push
+          fi
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - name: Deploy updated data cache to Pages
+        uses: actions/deploy-pages@v4
